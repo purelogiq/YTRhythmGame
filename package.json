@@ -1,0 +1,24 @@
+{
+  "name": "yt_rhythm_game",
+  "version": "1.0.0",
+  "description": "A multiplayer rhythm game using youtube and websockets. ",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/purelogiq/YTRhythmGame.git"
+  },
+  "author": "imadueme@andrew.cmu.edu",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/purelogiq/YTRhythmGame/issues"
+  },
+  "homepage": "https://github.com/purelogiq/YTRhythmGame#readme",
+  "dependencies": {
+    "express": "^4.13.3",
+    "morgan": "^1.6.1",
+    "socket.io": "^1.3.7"
+  }
+}
