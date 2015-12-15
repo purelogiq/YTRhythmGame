@@ -79,7 +79,24 @@
     <div class="section">
       <h4 id="open-rooms">Past Rooms</h4>
       <div class="divider"></div>
-      hi dad
+      <div class="row">
+        <% if(pastRooms.length == 0){ %>
+        <p class="bold">There are no past rooms. Be the first to play!</p>
+        <% } %>
+        <% for(i = 0; i < pastRooms.length; i++){ %>
+          <div class="col s6 m3">
+            <div class="card small">
+              <div class="card-image">
+                <img src="<%= 'http://img.youtube.com/vi/' + pastRooms[i].videoId + '/hqdefault.jpg' %>">
+              </div>
+              <div class="card-content">
+                <span>Note Maker: <%= pastRooms[i].noteMaker %></span><br />
+                <span>Note Player: <%= pastRooms[i].notePlayer %></span><br />
+              </div>
+            </div>
+          </div>
+        <% } %>
+      </div>
     </div>
   </div>
 </main>

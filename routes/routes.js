@@ -18,7 +18,10 @@ var listRooms = function(req, res) {
       openRooms.push(aRoom);
     }
   }
-  res.render('index', {rooms: openRooms});
+
+  var pastRooms = Room.getPastRoom(function(err, rooms){
+    res.render('index', {rooms: openRooms, pastRooms: rooms});
+  });
 };
 
 var joinRoom = function(req, res){

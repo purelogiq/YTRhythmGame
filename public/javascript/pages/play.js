@@ -7,6 +7,13 @@ $(function() {
   $(".button-collapse").sideNav();
 });
 
+var PlayTimer = function(){
+  this.time = null;
+  this.update = function(){
+    this.time = (new Date()).getTime();
+  }
+};
+
 var Play = new function(){
   // State fields
   var self = this;
@@ -57,10 +64,14 @@ var Play = new function(){
   var missD = null;
 
   // Timers
-  var noteLTime = null;
-  var noteRTime = null;
-  var noteUTime = null;
-  var noteDTime = null;
+  var noteLTime = new PlayTimer();
+  var noteRTime = new PlayTimer();
+  var noteUTime = new PlayTimer();
+  var noteDTime = new PlayTimer();
+  var feedbackLTime = new PlayTimer();
+  var feedbackRTime = new PlayTimer();
+  var feedbackUTime = new PlayTimer();
+  var feedbackDTime = new PlayTimer();
 
   // Methods
 
@@ -77,7 +88,7 @@ var Play = new function(){
 
       $('#bgndVideo').on("YTPReady",function(e){
         $('#loading-div').hide();
-        if(notePlayer == null || notePlayer == undefined){
+        if(notePlayer == null || noteMaker == undefined){
           $('#waiting-for-join').show();
         }else{
           socket.emit('playerJoined', {room: roomId, username: currentUsername});
@@ -89,6 +100,9 @@ var Play = new function(){
         if(currentRole == 'noteMaker'){
           socket.emit('finished', roomId);
         }
+        $('#loading-div').html("<span>FINSIHED!</span>");
+        $('#render-canvas').hide();
+        $('#loading-div').show();
       });
 
       self.setupCanvas();
@@ -100,36 +114,121 @@ var Play = new function(){
     $('#info-div').append("<span>Note Player: </span>" + notePlayer + "<br />");
     $('#waiting-for-join').hide();
     $('#render-canvas').show();
-    setTimeout(self.startVideo, 20);
+    setTimeout(self.startVideo, 12);
     playing = true;
   };
 
   this.animate = function(){
     requestAnimationFrame(self.animate);
-    var time = (new Date()).getTime();
-    //console.log(time);
+    var currentTime = (new Date()).getTime();
+    var missTimeout = 550;
+    var feebackTimeout = 480;
+    // Clear feedback that has been there too long.
+    if((missL.visible || hitL.visible) && ((currentTime - feedbackLTime.time) > feebackTimeout)){
+      missL.visible = false;
+      hitL.visible = false;
+    }
+    if((missR.visible || hitR.visible) && ((currentTime - feedbackRTime.time) > feebackTimeout)){
+      missR.visible = false;
+      hitR.visible = false;
+    }
+    if((missU.visible || hitU.visible) && ((currentTime - feedbackUTime.time) > feebackTimeout)){
+      missU.visible = false;
+      hitU.visible = false;
+    }
+    if((missD.visible || hitD.visible) && ((currentTime - feedbackDTime.time) > feebackTimeout)){
+      missD.visible = false;
+      hitD.visible = false;
+    }
+
+    // "Miss" notes that weren't tapped in the given amount of time.
+    if(noteL.visible && currentTime - noteLTime.time > missTimeout){
+      self.handleMiss(noteL, missL, feedbackLTime);
+    }
+    if(noteR.visible && currentTime - noteRTime.time > missTimeout){
+      self.handleMiss(noteR, missR, feedbackRTime);
+    }
+    if(noteU.visible && currentTime - noteUTime.time > missTimeout){
+      self.handleMiss(noteU, missU, feedbackUTime);
+    }
+    if(noteD.visible && currentTime - noteDTime.time > missTimeout){
+      self.handleMiss(noteD, missD, feedbackDTime);
+    }
+
     renderer.render(stage);
   };
 
   this.handleMakerTap = function(loc, isRelease){
+    console.log("The maker (" + noteMaker + ") tapped: " + loc);
     if(isRelease){
       if(loc == 'left') pressedL.visible = false;
       if(loc == 'right') pressedR.visible = false;
       if(loc == 'up') pressedU.visible = false;
       if(loc == 'down') pressedD.visible = false;
-      return;
+    }else {
+      if (loc == 'left') {
+        pressedL.visible = true;
+        self.showNote(noteL, noteLTime, hitL, missL);
+      }
+      else if (loc == 'right') {
+        pressedR.visible = true;
+        self.showNote(noteR, noteRTime, hitR, missR);
+      }
+      else if (loc == 'up') {
+        pressedU.visible = true;
+        self.showNote(noteU, noteUTime, hitU, missU);
+      }
+      else if (loc == 'down') {
+        pressedD.visible = true;
+        self.showNote(noteD, noteDTime, hitD, missD);
+      }
     }
-
-    if(loc == 'left') pressedL.visible = true;
-    if(loc == 'right') pressedR.visible = true;
-    if(loc == 'up') pressedU.visible = true;
-    if(loc == 'down') pressedD.visible = true;
-    console.log("The maker (" + noteMaker + ") tapped: " + loc);
   };
 
   this.handlePlayerTap = function(loc, isRelease){
-    if(isRelease) return;
-    console.log("The player (" + notePlayer + ") tapped: " + loc);
+    if(isRelease){
+      return;
+    }
+
+    if(loc == 'left'){
+      self.hitNote(noteL, hitL, missL, feedbackLTime);
+    }
+    else if(loc == 'right'){
+      self.hitNote(noteR, hitR, missR, feedbackRTime);
+    }
+    else if(loc == 'up'){
+      self.hitNote(noteU, hitU, missU, feedbackUTime);
+    }
+    else if(loc == 'down'){
+      self.hitNote(noteD, hitD, missD, feedbackDTime);
+    }
+  };
+
+  this.showNote = function(note, noteTimer, hit, miss){
+    if(note.visible){
+      return;
+    }
+    hit.visible = false;
+    miss.visible = false;
+    note.visible = true;
+    noteTimer.update();
+  };
+
+  this.hitNote = function(note, hit, miss, feedbackTime){
+    if(note.visible){
+      note.visible = false;
+      miss.visible = false;
+      hit.visible = true;
+      feedbackTime.update();
+    }
+  };
+
+  this.handleMiss = function(note, miss, feedbackTimer){
+    if(note.visible) {
+      note.visible = false;
+      miss.visible = true;
+      feedbackTimer.update();
+    }
   };
 
   this.startVideo = function(){
@@ -138,6 +237,7 @@ var Play = new function(){
 
   this.setupSockets = function(){
     socket = io.connect("http://ytgame-cmuimadueme.rhcloud.com:8000");
+    //socket = io.connect();
     socket.on('joinedInfo', function(username){
       if(currentRole == 'noteMaker'){
         notePlayer = username;
@@ -179,12 +279,14 @@ var Play = new function(){
       var loc = loc;
       var isRelease = isRelease;
       return function(){
-        if(currentRole == 'noteMaker'){
+        if(playing) {
+          if (currentRole == 'noteMaker') {
             socket.emit('tap', {room: roomId, loc: loc, release: isRelease});
             self.handleMakerTap(loc, isRelease);
-        }else{
-          socket.emit('tap', {room: roomId, loc: loc, release: isRelease});
-          self.handlePlayerTap(loc, isRelease);
+          } else {
+            socket.emit('tap', {room: roomId, loc: loc, release: isRelease});
+            self.handlePlayerTap(loc, isRelease);
+          }
         }
       }
     };
