@@ -1,0 +1,35 @@
+body {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+}
+
+main {
+    flex: 1 0 auto;
+}
+
+.clabel{
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+.loading{
+    background-color: white;
+    font-size: 4.5em;
+    font-weight: bold;
+    padding: 5px;
+    float: left;
+    width: 100%;
+    text-align: center;
+}
+
+.game-info{
+    background-color: rgba(0, 0, 0, .3);;
+    color: white;
+    position: absolute;
+    top: 1px;
+    left: 0px;
+    font-size: 1.4em;
+    font-weight: bold;
+    padding-left: 10px;
+}

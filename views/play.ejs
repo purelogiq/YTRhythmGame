@@ -1,9 +1,58 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:width="http://www.w3.org/1999/xhtml">
 <head>
-  <title></title>
+  <title>YT Rhythm Game</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/css/materialize.min.css" />
+  <link href="/css/jquery.mb.YTPlayer.min.css" media="all" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/main.css" />
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/js/materialize.min.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/javascript/jquery.mb.YTPlayer.js"></script>
+  <script src="/javascript/pixi.js"></script>
 </head>
 <body>
-<p></p>
+<input type="hidden" id="current-room-id" value="<%= roomId %>" />
+<input type="hidden" id="current-role" value="<%= currentRole %>" />
+<nav class="orange">
+  <div class="nav-wrapper container">
+    <a href="/" class="brand-logo">YT Rhythm Game</a>
+    <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
+    <ul class="right hide-on-med-and-down">
+      <li><a href="/#open-rooms">See Open Rooms</a></li>
+      <li><a href="/#past-rooms">See Past Rooms</a></li>
+    </ul>
+    <ul class="side-nav" id="mobile-demo">
+      <li><a href="/#open-rooms">See Open Rooms</a></li>
+      <li><a href="/#past-rooms">See Past Rooms</a></li>
+    </ul>
+  </div>
+</nav>
+<main class="center-align valign-wrapper">
+  <div id="loading-div" class="loading">
+    <span>LOADING</span>
+  </div>
+  <div id="waiting-for-join" class="loading" style="display: none">
+    <span>WAITING FOR ANOTHER PLAYER</span>
+  </div>
+  <div id="info-div" class="game-info">
+  </div>
+  <canvas id="render-canvas" style="margin: auto; display: none" class="valign" width="200" height="100"></canvas>
+</main>
+<footer class="page-footer orange">
+  <div class="footer-copyright orange darken-1">
+    <div class="container">
+      Made By Israel M (imadueme AT andrew cmu edu)
+      <a class="grey-text text-lighten-4 right" target="_blank" href="https://github.com/purelogiq/YTRhythmGame">See Source On GitHub
+        <img src="https://assets-cdn.github.com/images/modules/logos_page/Octocat.png"
+             width="40px" height="40px" /></a>
+    </div>
+  </div>
+</footer>
+
+<script src="/javascript/pages/play.js"></script>
 </body>
 </html>

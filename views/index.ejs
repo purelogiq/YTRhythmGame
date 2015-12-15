@@ -2,8 +2,111 @@
 <html>
 <head>
   <title>YT Rhythm Game</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/css/materialize.min.css" />
+  <link rel="stylesheet" href="/css/main.css" />
+  <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/js/materialize.min.js"></script>
+  <script src="/javascript/pages/index.js"></script>
 </head>
 <body>
-<p><%= message %></p>
+<nav class="orange">
+  <div class="nav-wrapper container">
+    <a href="/" class="brand-logo">YT Rhythm Game</a>
+    <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
+    <ul class="right hide-on-med-and-down">
+      <li><a href="#open-rooms">See Open Rooms</a></li>
+      <li><a href="#past-rooms">See Past Rooms</a></li>
+    </ul>
+    <ul class="side-nav" id="mobile-demo">
+      <li><a href="#open-rooms">See Open Rooms</a></li>
+      <li><a href="#past-rooms">See Past Rooms</a></li>
+    </ul>
+  </div>
+</nav>
+<main>
+  <div class="container">
+    <div class="center-align">
+      <img src="/images/logo.png" width="50%" />
+    </div>
+    <form action="/room/new" method="post">
+      <div class="row">
+        <div class="col s12 m6">
+            <label for="videoId" class="clabel">Enter the youtube video id:</label>
+            <input type="text" name="videoId" placeholder="E.g. cZu4nuHQY6Q" required/>
+        </div>
+        <div class="col s12 m6">
+          <label for="role" class="clabel">Play as:</label>
+          <select name="role">
+            <option value="noteMaker">Note Maker</option>
+            <option value="notePlayer">Note Player</option>
+          </select>
+        </div>
+        <div class="col s12 center-align">
+          <button class="btn-large waves-effect waves-light blue darken-4" type="submit" name="action">Create A New Room!
+            <i class="material-icons right">send</i>
+          </button>
+        </div>
+      </div>
+      <input type="hidden" id="username" name="username"  value="" />
+    </form>
+    <div class="section">
+      <h4 id="open-rooms">Open Rooms</h4>
+      <div class="divider"></div>
+      <div class="row">
+      <% if(rooms.length == 0){ %>
+        <p class="bold">There are no open rooms. Refresh the page to check again or create one!</p>
+      <% } %>
+      <% for(var i = 0; i < rooms.length; i++){ %>
+          <div class="col s6 m3">
+            <div class="card small">
+              <div class="card-image">
+                <img src="<%= 'http://img.youtube.com/vi/' + rooms[i].getVideoId() + '/hqdefault.jpg' %>">
+              </div>
+              <div class="card-content">
+                <span>Created by: <%= rooms[i].getListingUsername()%></span><br />
+                <span>Join as the : <%= rooms[i].getListingRole() %></span><br />
+                <a class="waves-effect waves-light btn blue darken-4"
+                   onclick="<%= 'joinRoom(' + rooms[i].getId() + ', \'' + rooms[i].getListingRole() + '\')' %>">Join this room</a>
+              </div>
+            </div>
+          </div>
+      <% } %>
+      </div>
+    </div>
+    <div class="section">
+      <h4 id="open-rooms">Past Rooms</h4>
+      <div class="divider"></div>
+      hi dad
+    </div>
+  </div>
+</main>
+<footer class="page-footer orange">
+  <div class="footer-copyright orange darken-1">
+    <div class="container">
+      Made By Israel M (imadueme AT andrew cmu edu)
+      <a class="grey-text text-lighten-4 right" target="_blank" href="https://github.com/purelogiq/YTRhythmGame">See Source On GitHub
+        <img src="https://assets-cdn.github.com/images/modules/logos_page/Octocat.png"
+             width="40px" height="40px" /></a>
+    </div>
+  </div>
+</footer>
+<!-- Modal Structure -->
+<div id="welcome-modal" class="modal">
+  <div class="modal-content">
+    <h4>Lets Play YTRhythmGame!</h4>
+    <div class="center-align"><img src="/images/logo.png" width="40%" /></div>
+    <p>YTRhythmGame is similar to DanceDanceRevolution. The music is provided by
+    youtube and the beats are made by another player (this is a 2-player game!).
+      To get started you'll need a username, enter one below then click "Done"</p>
+    <label for="username-input">Username: </label>
+    <input id="username-input" name="username-input" type="text" />
+  </div>
+  <div class="modal-footer">
+    <a onclick="saveUsername()" class=" modal-action modal-close waves-effect waves-green btn-flat">Done</a>
+  </div>
+</div>
 </body>
 </html>
