@@ -45,4 +45,6 @@ var sio =require('socket.io')(httpServer);
 // The server socket.io code is in the socketio directory.
 require('./socketio/play.js').init(sio);
 
-httpServer.listen(1111, function() {console.log('Listening on 1111');});
+ipaddress = process.env.OPENSHIFT_NODEJS_IP || "127.0.0.1";
+port = process.env.OPENSHIFT_NODEJS_PORT || 1111;
+httpServer.listen(port, ipaddress, function() {console.log('Listening on ' + port);});

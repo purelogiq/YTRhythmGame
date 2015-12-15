@@ -137,7 +137,7 @@ var Play = new function(){
   };
 
   this.setupSockets = function(){
-    socket = io.connect();
+    socket = io.connect("http://ytgame-cmuimadueme.rhcloud.com:8000");
     socket.on('joinedInfo', function(username){
       if(currentRole == 'noteMaker'){
         notePlayer = username;
